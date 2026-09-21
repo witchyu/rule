@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ประกาศ - Witch Yu</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Charmonman:wght@400;700&family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<style>
+  :root{
+    --gold:#f0d489;
+    --gold-line: rgba(240,212,137,0.55);
+    --ok:#4fce7a;
+    --full:#e2645f;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;height:100%;}
+  body{
+    min-height:100vh;
+    background:#150829;
+    font-family:'Sarabun', sans-serif;
+    color:#f6f1ff;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    padding: 32px 16px 24px;
+  }
+
+  /* ---- the part that gets saved / shared as an image ---- */
+  .stage{
+    position:relative;
+    width:100%;
+    max-width:420px;
+    aspect-ratio: 9 / 16;
+    border-radius:26px;
+    overflow:hidden;
+    background:#150829 url('bg.jpeg') center/cover no-repeat;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding: 8%;
+    box-shadow: 0 30px 70px rgba(0,0,0,0.55);
+  }
+  .stage::before{
+    content:"";
+    position:absolute;
+    inset:0;
+    background: radial-gradient(ellipse at center, rgba(15,6,30,0.22), rgba(10,4,22,0.6));
+    pointer-events:none;
+  }
+
+  .frame{
+    position:relative;
+    width:100%;
+    border:1.5px solid var(--gold-line);
+    border-radius:28px;
+    padding:28px 22px 24px;
+    background: linear-gradient(180deg, rgba(40,16,72,0.55), rgba(18,7,36,0.7));
+    box-shadow: inset 0 0 40px rgba(240,212,137,0.06);
+  }
+  .frame::before{
+    content:"";
+    position:absolute;
+    inset:9px;
+    border:1px solid rgba(240,212,137,0.28);
+    border-radius:20px;
+    pointer-events:none;
+  }
+
+  .glyphs{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:10px;
+    margin-bottom:6px;
+    color:var(--gold);
+    opacity:0.9;
+  }
+  .glyphs svg{ width:18px; height:18px; }
+
+  h1.title{
+    font-family:'Charmonman', cursive;
+    text-align:center;
+    font-size:40px;
+    margin:0 0 4px;
+    color:var(--gold);
+    text-shadow:0 0 22px rgba(240,212,137,0.35);
+  }
+  .rule{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:8px;
+    margin:6px auto 18px;
+    color:var(--gold-line);
+    font-size:12px;
+  }
+  .rule .line{ width:44px; height:1px; background:var(--gold-line); }
+
+  .content-box{
+    background:rgba(6,2,14,0.55);
+    border:1px solid rgba(240,212,137,0.18);
+    border-radius:18px;
+    padding:16px 14px;
+    margin:0 auto;
+  }
+
+  /* ---- closed / free-text style ---- */
+  .closed-lines{
+    text-align:center;
+    line-height:1.85;
+    font-size:15px;
+  }
+  .closed-lines .flag-line{
+    color:#ff8a80;
+    font-weight:600;
+  }
+  .date-pill{
+    display:block;
+    text-align:center;
+    font-size:13.5px;
+    color:var(--gold);
+    margin-bottom:14px;
+    letter-spacing:0.3px;
+  }
+
+  /* ---- queue style ---- */
+  .queue-title{
+    text-align:center;
+    line-height:1.7;
+    font-size:15px;
+    margin-bottom:16px;
+    color:#f6f1ff;
+  }
+  .queue-date{
+    text-align:center;
+    font-size:14px;
+    color:var(--gold);
+    text-decoration:underline;
+    text-underline-offset:4px;
+    margin-bottom:14px;
+  }
+  .slot-row{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:8px 4px;
+    font-size:15px;
+    border-bottom:1px dashed rgba(255,255,255,0.08);
+  }
+  .slot-row:last-child{ border-bottom:none; }
+  .slot-time{
+    text-decoration:underline;
+    text-underline-offset:4px;
+  }
+  .slot-status{
+    display:flex;
+    align-items:center;
+    gap:6px;
+    font-size:14px;
+  }
+  .slot-status.free{ color:var(--ok); }
+  .slot-status.taken{ color:#e8e2f7; }
+  .badge{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    width:18px;height:18px;
+    border-radius:6px;
+    font-size:11px;
+  }
+  .badge.free{ background:rgba(79,206,122,0.16); color:var(--ok); }
+  .badge.taken{ background:rgba(226,100,95,0.16); color:var(--full); }
+
+  .empty-state{
+    text-align:center;
+    font-size:14px;
+    color:rgba(246,241,255,0.6);
+    padding:20px 6px;
+  }
+
+  /* ---- controls (NOT part of the saved image) ---- */
+  .actions{
+    width:100%;
+    max-width:420px;
+    display:flex;
+    gap:10px;
+    margin-top:18px;
+  }
+  .action-btn{
+    flex:1;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:8px;
+    padding:13px 10px;
+    border-radius:14px;
+    border:1px solid var(--gold-line);
+    background:rgba(240,212,137,0.08);
+    color:var(--gold);
+    font-family:'Sarabun',sans-serif;
+    font-size:14.5px;
+    font-weight:600;
+    cursor:pointer;
+    transition: transform .15s ease, background .15s ease;
+  }
+  .action-btn svg{ width:18px; height:18px; flex-shrink:0; }
+  .action-btn:hover{ background:rgba(240,212,137,0.16); }
+  .action-btn:active{ transform: translateY(1px); }
+  .action-btn:disabled{ opacity:0.5; cursor:default; }
+  .action-btn.primary{
+    background:linear-gradient(180deg, #f2d896, #caa75d);
+    color:#241143;
+    border-color:transparent;
+  }
+
+  .toast{
+    width:100%;
+    max-width:420px;
+    text-align:center;
+    font-size:13px;
+    color:rgba(246,241,255,0.75);
+    margin-top:10px;
+    min-height:16px;
+  }
+
+  .admin-link{
+    display:block;
+    text-align:center;
+    margin-top:18px;
+    font-size:12px;
+    color:rgba(240,212,137,0.45);
+    text-decoration:none;
+    letter-spacing:0.4px;
+  }
+  .admin-link:hover{ color:var(--gold); }
+
+  @media (max-width:380px){
+    h1.title{ font-size:34px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="stage" id="capture-target">
+  <div class="frame">
+    <div class="glyphs">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a9.9 9.9 0 0 0-4 .84A8 8 0 1 1 12 21.9 9.9 9.9 0 0 0 12 2z"/></svg>
+      <div class="rule"><span class="line"></span></div>
+      <svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1L7 17M17 7l2.1-2.1"/></svg>
+    </div>
+
+    <h1 class="title">ประกาศ</h1>
+    <div class="rule"><span class="line"></span><span class="line"></span></div>
+
+    <div class="content-box" id="content-box">
+      <div class="empty-state">ยังไม่มีประกาศที่บันทึกไว้</div>
+    </div>
+  </div>
+</div>
+
+<div class="actions">
+  <button type="button" class="action-btn" id="save-btn">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+    บันทึกภาพ
+  </button>
+  <button type="button" class="action-btn primary" id="share-btn">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.6" y1="10.6" x2="15.4" y2="6.4"/><line x1="8.6" y1="13.4" x2="15.4" y2="17.6"/></svg>
+    แชร์ไปสตอรี่ IG
+  </button>
+</div>
+<div class="toast" id="toast"></div>
+
+<a class="admin-link" href="rule.html">แก้ไขประกาศ (แอดมิน)</a>
+
+<script>
+  const raw = localStorage.getItem('witchyu_announcement');
+  const box = document.getElementById('content-box');
+
+  function fmtThaiDate(iso){
+    if(!iso) return '';
+    const d = new Date(iso + 'T00:00:00');
+    const months = ['มกราคม','กุมภาพันธ์','มีนาคม','เมษายน','พฤษภาคม','มิถุนายน','กรกฎาคม','สิงหาคม','กันยายน','ตุลาคม','พฤศจิกายน','ธันวาคม'];
+    return `${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear()+543}`;
+  }
+
+  function escapeHtml(str){
+    const div = document.createElement('div');
+    div.textContent = str;
+    return div.innerHTML;
+  }
+
+  if(raw){
+    const data = JSON.parse(raw);
+
+    if(data.mode === 'closed'){
+      const dateLabel = (data.dateFrom || data.dateTo)
+        ? `วันที่ ${fmtThaiDate(data.dateFrom)}${data.dateTo && data.dateTo !== data.dateFrom ? ' - ' + fmtThaiDate(data.dateTo) : ''}`
+        : '';
+
+      const lines = (data.message || '').split('\n').filter(l => l.trim().length);
+      const linesHtml = lines.map(l => {
+        const isFlag = l.includes('❌') || l.includes('✖') || l.includes('✗');
+        return `<div class="${isFlag ? 'flag-line' : ''}">${escapeHtml(l)}</div>`;
+      }).join('');
+
+      box.innerHTML = `
+        ${dateLabel ? `<span class="date-pill">${dateLabel}</span>` : ''}
+        <div class="closed-lines">${linesHtml}</div>
+      `;
+    } else if(data.mode === 'queue'){
+      const titleLines = (data.title || '').split('\n').filter(l => l.trim().length)
+        .map(l => `<div>${escapeHtml(l)}</div>`).join('');
+
+      const slotsHtml = (data.slots || []).map(s => {
+        const free = s.status === 'ว่าง';
+        return `
+          <div class="slot-row">
+            <span class="slot-time">${escapeHtml(s.time)}</span>
+            <span class="slot-status ${free ? 'free' : 'taken'}">
+              ${free ? 'คิวว่าง' : 'จอง'}
+              <span class="badge ${free ? 'free' : 'taken'}">${free ? '●' : '✓'}</span>
+            </span>
+          </div>
+        `;
+      }).join('');
+
+      box.innerHTML = `
+        <div class="queue-title">${titleLines}</div>
+        ${data.date ? `<div class="queue-date">วันที่ ${escapeHtml(data.date)}</div>` : ''}
+        ${slotsHtml || '<div class="empty-state">ยังไม่มีช่วงเวลาคิว</div>'}
+      `;
+    }
+  }
+
+  // ---------- save / share as image ----------
+  const stage = document.getElementById('capture-target');
+  const saveBtn = document.getElementById('save-btn');
+  const shareBtn = document.getElementById('share-btn');
+  const toast = document.getElementById('toast');
+
+  function setToast(msg, ms = 3500){
+    toast.textContent = msg;
+    if(ms){ setTimeout(()=>{ if(toast.textContent===msg) toast.textContent=''; }, ms); }
+  }
+
+  async function renderCanvas(){
+    return await html2canvas(stage, {
+      backgroundColor: null,
+      scale: 3,          // crisp, ~1080px wide output for IG story quality
+      useCORS: true,
+      allowTaint: true
+    });
+  }
+
+  async function getPngBlob(){
+    const canvas = await renderCanvas();
+    return await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
+  }
+
+  saveBtn.addEventListener('click', async () => {
+    saveBtn.disabled = true;
+    setToast('กำลังสร้างภาพ...', 0);
+    try{
+      const blob = await getPngBlob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'ประกาศ-witchyu.png';
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+      setToast('บันทึกภาพแล้วค่ะ');
+    }catch(err){
+      console.error(err);
+      setToast('บันทึกภาพไม่สำเร็จ ลองเปิดผ่านเว็บโฮสต์จริงแทนไฟล์ในเครื่องนะคะ');
+    }finally{
+      saveBtn.disabled = false;
+    }
+  });
+
+  shareBtn.addEventListener('click', async () => {
+    shareBtn.disabled = true;
+    setToast('กำลังเตรียมรูปสำหรับแชร์...', 0);
+    try{
+      const blob = await getPngBlob();
+      const file = new File([blob], 'ประกาศ-witchyu.png', { type: 'image/png' });
+
+      if(navigator.canShare && navigator.canShare({ files: [file] })){
+        await navigator.share({
+          files: [file],
+          title: 'ประกาศ',
+          text: 'ประกาศคิวจาก Witch Yu'
+        });
+        setToast('เปิดหน้าต่างแชร์แล้วค่ะ เลือก Instagram แล้วเลือก "เพิ่มไปยังสตอรี่" ได้เลย');
+      } else {
+        // fallback: browsers/devices without file-sharing support
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'ประกาศ-witchyu.png';
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        URL.revokeObjectURL(url);
+        setToast('อุปกรณ์นี้แชร์ตรงไม่ได้ ระบบบันทึกภาพให้แล้ว เปิดแอป IG แล้วเลือกรูปนี้ไปโพสต์สตอรี่ได้เลยค่ะ', 6000);
+      }
+    }catch(err){
+      if(err && err.name === 'AbortError'){
+        setToast('');
+      } else {
+        console.error(err);
+        setToast('แชร์ไม่สำเร็จ ลองใช้ปุ่ม "บันทึกภาพ" แล้วแชร์เองจากแอป IG แทนนะคะ');
+      }
+    }finally{
+      shareBtn.disabled = false;
+    }
+  });
+
+  // hide the share button on browsers that can't share files or images at all
+  if(!(navigator.share)){
+    shareBtn.querySelector('svg').style.opacity = '0.7';
+  }
+</script>
+</body>
+</html>
