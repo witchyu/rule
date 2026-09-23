@@ -36,82 +36,93 @@
     aspect-ratio: 9 / 16;
     border-radius:26px;
     overflow:hidden;
-    background:#150829 url('bg.jpeg') center/cover no-repeat;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    padding: 8%;
+    background:#150829 url('bg.jpeg') center/contain no-repeat;
     box-shadow: 0 30px 70px rgba(0,0,0,0.55);
   }
   .stage::before{
     content:"";
     position:absolute;
     inset:0;
-    background: radial-gradient(ellipse at center, rgba(15,6,30,0.22), rgba(10,4,22,0.6));
+    background: radial-gradient(ellipse at center, rgba(15,6,30,0), rgba(10,4,22,0));
     pointer-events:none;
   }
 
-  .frame{
-    position:relative;
-    width:100%;
-    border:1.5px solid var(--gold-line);
-    border-radius:28px;
-    padding:28px 22px 24px;
-    background: linear-gradient(180deg, rgba(40,16,72,0.55), rgba(18,7,36,0.7));
-    box-shadow: inset 0 0 40px rgba(240,212,137,0.06);
+  /* the whole announcement sits inside the ornate oval border already
+     drawn into bg.jpeg — everything below is clamped inside this box,
+     no matter how much content gets added */
+  .frame-region{
+    position:absolute;
+    top:21%;
+    bottom:12%;
+    left:14%;
+    right:14%;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    gap:3.5%;
   }
-  .frame::before{
+
+  /* single gold-bordered box — used for the title line and for the
+     closed/free-text message */
+  .box{
+    position:relative;
+    flex-shrink:0;
+    max-height:100%;
+    overflow:hidden;
+    border:1.5px solid var(--gold-line);
+    border-radius:24px;
+    padding:16px 14px;
+    background: linear-gradient(180deg, rgba(40,16,72,0.55), rgba(18,7,36,0.7));
+    box-shadow: inset 0 0 30px rgba(240,212,137,0.06);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+  .box::before{
     content:"";
     position:absolute;
-    inset:9px;
+    inset:7px;
     border:1px solid rgba(240,212,137,0.28);
-    border-radius:20px;
+    border-radius:17px;
     pointer-events:none;
   }
 
-  .glyphs{
+  /* the nested, thicker-bordered box that holds the queue slots */
+  .list-box{
+    position:relative;
+    flex:1 1 auto;
+    min-height:0;
+    border-radius:26px;
+    padding:9px;
+    border:1.5px solid rgba(165,145,215,0.45);
+    background: linear-gradient(180deg, rgba(58,40,110,0.5), rgba(40,25,85,0.5));
     display:flex;
-    align-items:center;
-    justify-content:center;
-    gap:10px;
-    margin-bottom:6px;
-    color:var(--gold);
-    opacity:0.9;
   }
-  .glyphs svg{ width:18px; height:18px; }
-
-  h1.title{
-    font-family:'Charmonman', cursive;
-    text-align:center;
-    font-size:40px;
-    margin:0 0 4px;
-    color:var(--gold);
-    text-shadow:0 0 22px rgba(240,212,137,0.35);
+  .list-box::before{
+    content:"";
+    position:absolute;
+    inset:6px;
+    border:1px solid var(--gold-line);
+    border-radius:21px;
+    pointer-events:none;
   }
-  .rule{
+  .list-inner{
+    flex:1;
+    min-height:0;
+    background:rgba(6,2,14,0.6);
+    border-radius:16px;
+    padding:12px 16px;
+    overflow:hidden;
     display:flex;
-    align-items:center;
+    flex-direction:column;
     justify-content:center;
-    gap:8px;
-    margin:6px auto 18px;
-    color:var(--gold-line);
-    font-size:12px;
-  }
-  .rule .line{ width:44px; height:1px; background:var(--gold-line); }
-
-  .content-box{
-    background:rgba(6,2,14,0.55);
-    border:1px solid rgba(240,212,137,0.18);
-    border-radius:18px;
-    padding:16px 14px;
-    margin:0 auto;
   }
 
   /* ---- closed / free-text style ---- */
   .closed-lines{
     text-align:center;
-    line-height:1.85;
-    font-size:15px;
+    line-height:1.75;
+    font-size: var(--fs, 15px);
   }
   .closed-lines .flag-line{
     color:#ff8a80;
@@ -120,34 +131,34 @@
   .date-pill{
     display:block;
     text-align:center;
-    font-size:13.5px;
+    font-size: calc(var(--fs, 15px) - 1.5px);
     color:var(--gold);
-    margin-bottom:14px;
+    margin-bottom:10px;
     letter-spacing:0.3px;
   }
 
   /* ---- queue style ---- */
   .queue-title{
     text-align:center;
-    line-height:1.7;
-    font-size:15px;
-    margin-bottom:16px;
+    line-height:1.6;
+    font-size: var(--fs, 15px);
     color:#f6f1ff;
   }
   .queue-date{
     text-align:center;
-    font-size:14px;
+    font-size: calc(var(--fs, 14px) - 1px);
     color:var(--gold);
     text-decoration:underline;
     text-underline-offset:4px;
-    margin-bottom:14px;
+    margin-bottom: calc(var(--fs, 14px) * 0.6);
+    flex-shrink:0;
   }
   .slot-row{
     display:flex;
     align-items:center;
     justify-content:space-between;
-    padding:8px 4px;
-    font-size:15px;
+    padding: calc(var(--fs, 15px) * 0.45) 4px;
+    font-size: var(--fs, 15px);
     border-bottom:1px dashed rgba(255,255,255,0.08);
   }
   .slot-row:last-child{ border-bottom:none; }
@@ -159,7 +170,7 @@
     display:flex;
     align-items:center;
     gap:6px;
-    font-size:14px;
+    font-size: calc(var(--fs, 15px) - 1px);
   }
   .slot-status.free{ color:var(--ok); }
   .slot-status.taken{ color:#e8e2f7; }
@@ -167,18 +178,19 @@
     display:inline-flex;
     align-items:center;
     justify-content:center;
-    width:18px;height:18px;
+    width: calc(var(--fs, 15px) * 1.2);
+    height: calc(var(--fs, 15px) * 1.2);
     border-radius:6px;
-    font-size:11px;
+    font-size: calc(var(--fs, 15px) * 0.75);
+    flex-shrink:0;
   }
   .badge.free{ background:rgba(79,206,122,0.16); color:var(--ok); }
   .badge.taken{ background:rgba(226,100,95,0.16); color:var(--full); }
 
   .empty-state{
     text-align:center;
-    font-size:14px;
+    font-size: var(--fs, 14px);
     color:rgba(246,241,255,0.6);
-    padding:20px 6px;
   }
 
   /* ---- controls (NOT part of the saved image) ---- */
@@ -245,11 +257,8 @@
 <body>
 
 <div class="stage" id="capture-target">
-  <div class="frame">
-    <div class="glyphs">
-    </div>
-
-    <div class="content-box" id="content-box">
+  <div class="frame-region" id="frame-region">
+    <div class="box" id="content-box">
       <div class="empty-state">ยังไม่มีประกาศที่บันทึกไว้</div>
     </div>
   </div>
@@ -271,7 +280,7 @@
 
 <script>
   const raw = localStorage.getItem('witchyu_announcement');
-  const box = document.getElementById('content-box');
+  const region = document.getElementById('frame-region');
 
   function fmtThaiDate(iso){
     if(!iso) return '';
@@ -284,6 +293,20 @@
     const div = document.createElement('div');
     div.textContent = str;
     return div.innerHTML;
+  }
+
+  // shrinks font-size on `el` (via the --fs custom property) until its
+  // content fits inside its own rendered box — used so any amount of
+  // text/slots always stays inside the gold frame instead of spilling out.
+  function fitToBox(el, { start = 15, min = 8, step = 0.5 } = {}){
+    let fs = start;
+    el.style.setProperty('--fs', fs + 'px');
+    let guard = 0;
+    while (el.scrollHeight > el.clientHeight + 1 && fs > min && guard < 40){
+      fs -= step;
+      el.style.setProperty('--fs', fs + 'px');
+      guard++;
+    }
   }
 
   if(raw){
@@ -300,10 +323,16 @@
         return `<div class="${isFlag ? 'flag-line' : ''}">${escapeHtml(l)}</div>`;
       }).join('');
 
-      box.innerHTML = `
-        ${dateLabel ? `<span class="date-pill">${dateLabel}</span>` : ''}
-        <div class="closed-lines">${linesHtml}</div>
+      region.innerHTML = `
+        <div class="box" id="msg-box">
+          <div>
+            ${dateLabel ? `<span class="date-pill">${dateLabel}</span>` : ''}
+            <div class="closed-lines">${linesHtml}</div>
+          </div>
+        </div>
       `;
+      fitToBox(document.getElementById('msg-box'));
+
     } else if(data.mode === 'queue'){
       const titleLines = (data.title || '').split('\n').filter(l => l.trim().length)
         .map(l => `<div>${escapeHtml(l)}</div>`).join('');
@@ -321,12 +350,25 @@
         `;
       }).join('');
 
-      box.innerHTML = `
-        <div class="queue-title">${titleLines}</div>
-        ${data.date ? `<div class="queue-date">วันที่ ${escapeHtml(data.date)}</div>` : ''}
-        ${slotsHtml || '<div class="empty-state">ยังไม่มีช่วงเวลาคิว</div>'}
+      region.innerHTML = `
+        <div class="box" id="title-box">
+          <div class="queue-title">${titleLines}</div>
+        </div>
+        <div class="list-box">
+          <div class="list-inner" id="list-inner">
+            ${data.date ? `<div class="queue-date">วันที่ ${escapeHtml(data.date)}</div>` : ''}
+            ${slotsHtml || '<div class="empty-state">ยังไม่มีช่วงเวลาคิว</div>'}
+          </div>
+        </div>
       `;
+      fitToBox(document.getElementById('title-box'));
+      fitToBox(document.getElementById('list-inner'));
+
+    } else {
+      fitToBox(document.getElementById('content-box'));
     }
+  } else {
+    fitToBox(document.getElementById('content-box'));
   }
 
   // ---------- save / share as image ----------
